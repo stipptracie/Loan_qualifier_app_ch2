@@ -13,7 +13,7 @@ import csv
 
 from pathlib import Path
 
-from qualifier.utils.fileio import load_csv
+from qualifier.utils.fileio import load_csv, save_csv
 
 from qualifier.utils.calculators import (
     calculate_monthly_debt_ratio,
@@ -25,6 +25,22 @@ from qualifier.filters.credit_score import filter_credit_score
 from qualifier.filters.debt_to_income import filter_debt_to_income
 from qualifier.filters.loan_to_value import filter_loan_to_value
 
+def run():
+    """The main function for running the script."""
+
+    # Load the latest Bank data
+    bank_data = load_bank_data()
+
+    # Get the applicant's information
+    credit_score, debt, income, loan_amount, home_value = get_applicant_info()
+
+    # Find qualifying loans
+    qualifying_loans = find_qualifying_loans(
+        bank_data, credit_score, debt, income, loan_amount, home_value
+    )
+
+    # Save qualifying loans
+    save_qualifying_loans(qualifying_loans)
 
 def load_bank_data():
     """Ask for the file path to the latest banking data and load the CSV file.
@@ -37,7 +53,6 @@ def load_bank_data():
     csvpath = Path(csvpath)
     if not csvpath.exists():
         sys.exit(f"Oops! Can't find this path: {csvpath}")
-
     return load_csv(csvpath)
 
 
@@ -104,45 +119,21 @@ def find_qualifying_loans(bank_data, credit_score, debt, income, loan, home_valu
     return bank_data_filtered
 
 
-def save_qualifying_loans():
+def save_qualifying_loans(qualifying_loans):
     """Saves the qualifying loans to a CSV file.
     Args:
         qualifying_loans (list of lists): The qualifying bank loans.
     """
-    my_qualifying_loans = questionary.confirm("Would you like to save your loans?").ask()
-    if my_qualifying_loans == "Yes":
-        my_csv = questionary.text("Enter a file path to create your spreadsheet (.csv):").ask()
-        save_csv(my_csv)
-    else:
-        sys.exit(f"As requested, your information has not been saved.")
+    if not qualifying_loans:
+        sys.exit("Sorry, there are no qualifying loans!")
 
-def save_csv():
-    header = [""]
-    output_path = Path(my_csv)
+    saveFile = questionary.confirm("Would you like to save the qualifying loans?").ask()
 
-    with open(output_path, 'w', newline='') as csvfile:
-    csvwriter = csv.writer(csvfile)
-    csvwriter.writerow(header)
-    for loan_data in qualifying_loans:
-        csvwriter.writerows(loan_data.values())
-
-def run():
-    """The main function for running the script."""
-
-    # Load the latest Bank data
-    bank_data = load_bank_data()
-
-    # Get the applicant's information
-    credit_score, debt, income, loan_amount, home_value = get_applicant_info()
-
-    # Find qualifying loans
-    qualifying_loans = find_qualifying_loans(
-        bank_data, credit_score, debt, income, loan_amount, home_value
-    )
-
-    # Save qualifying loans
-    save_qualifying_loans(qualifying_loans)
-
+    if saveFile:
+        csvpath = questionary.text(
+            "Please enter a filepath for the saved data: (qualifying_loans.csv)"
+        ).ask()
+        save_csv(Path(csvpath), qualifying_loans)
 
 if __name__ == "__main__":
     fire.Fire(run)
