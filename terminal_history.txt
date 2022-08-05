@@ -1,0 +1,37 @@
+    1  ls -al ~/.ssh
+    2  ssh-keygen -t rsa -b 4096 -C "thestippfamily@yahoo.com"
+    3  eval "$(ssh-agent -s)"
+    4  ssh-add ~/.ssh/id_rsa
+    5  clip < ~/.ssh/id_rsa.pub
+    6  ssh -T git@github.com
+    7  ssh -T git@github.com
+    8  conda --version
+    9  conda update conda
+   10  conda update anaconda
+   11  conda activate dev
+   12  conda init bash
+   13  conda init bash
+   14  conda --version
+   15  conda update conda
+   16  conda create -n dev python=3.7 anaconda
+   17  conda init bash
+   18  conda activate dev
+   19  pwd
+   20  ls
+   21  cd desktop
+   22  pwd
+   23  ls
+   24  pwd
+   25  cd desktop
+   26  cd FINTECH_Workspace
+   27  ls
+   28  cd Loan_qualifier_app_ch2
+   29  git status
+   30  git add app.py
+   31  git add qualifier/utils/fileio.py
+   32  git add qualifying_loans.csv
+   33  git status
+   34  git commit -m "added save_csv to file.io and debugged save_qualifying_loans function"
+   35  git push
+   36  history 50 > terminal_history.txt
+  
